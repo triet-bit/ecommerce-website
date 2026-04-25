@@ -6,6 +6,21 @@ CREATE PROCEDURE sp_thong_ke_doanh_thu_nguoi_ban(
     IN p_den_ngay DATETIME
 )
 BEGIN
+    -- 1. Kiểm tra khoảng thời gian hợp lệ
+    IF p_tu_ngay > p_den_ngay THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Error: tu_ngay phai nho hon hoac bang den_ngay';
+    END IF;
+
+    -- 2. Kiểm tra seller tồn tại
+    IF NOT EXISTS (
+        SELECT 1 FROM nguoi_bans WHERE id = p_seller_id
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Error: seller_id khong ton tai';
+    END IF;
+
+    -- 3. Thống kê doanh thu (chỉ tính đơn đã thanh toán + giao thành công)
     SELECT 
         sp.product_id,
         sp.ten_san_pham,
@@ -25,13 +40,15 @@ BEGIN
     WHERE 
         sp.seller_id = p_seller_id
         AND dh.thoi_gian_giao_dich BETWEEN p_tu_ngay AND p_den_ngay
-        AND dh.trang_thai_thanh_toan = 'da_thanh_toan'   -- chỉ tính đơn đã trả tiền
+        
+        AND dh.trang_thai_thanh_toan = 'da_thanh_toan'
+        AND dh.trang_thai_don_hang = 'giao_thanh_cong'
 
     GROUP BY 
         sp.product_id, sp.ten_san_pham
 
     HAVING 
-        doanh_thu > 0   -- lọc sau khi GROUP
+        doanh_thu > 0
 
     ORDER BY 
         doanh_thu DESC;
@@ -39,3 +56,5 @@ BEGIN
 END$$
 
 DELIMITER ;
+
+
