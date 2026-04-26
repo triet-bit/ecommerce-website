@@ -82,7 +82,7 @@ CREATE TABLE san_phams(
     mo_ta_chi_tiet varchar(512) NOT NULL,
     loai_bao_hanh varchar(50) NOT NULL,
     to_chuc_san_xuat varchar(100) NOT NULL, 
-    gia_ban float NOT NULL CHECK (gia_ban >= 0), -- ràng buộc 1.3.5
+    gia_ban decimal(13,2) NOT NULL CHECK (gia_ban >= 0), -- ràng buộc 1.3.5
     so_luong_ton_kho int NOT NULL CHECK (so_luong_ton_kho >= 0), -- ràng buộc 1.3.5
     seller_id int NOT NULL, 
     trang_thai enum('dang_ban','ngung_ban','het_hang') DEFAULT 'dang_ban', -- thêm vào ở ràng buộc 1.3.10 
