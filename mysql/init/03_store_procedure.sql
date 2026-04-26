@@ -88,6 +88,7 @@ create procedure sp_cap_nhat_san_pham(
     in p_trang_thai varchar(50) -- thêm vào ở ràng buộc 1.3.10 
 )
 begin 
+	DECLARE tong_luong_dang_ban int; 
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
 	begin 
 		rollback; 
@@ -99,35 +100,34 @@ begin
 		set MESSAGE_TEXT = "Error: product id is invalid"; 	
 	end if; 
 
-	if not exists (select 1 from san_phams where id = p_id) then 
+	if not exists (select 1 from san_phams where product_id = p_id) then 
 		signal sqlstate '45000' 
 		set MESSAGE_TEXT = "Error: product not exists"; 	
 	end if; 	
-	
-	if exists (
-		select 1 
-		from chi_tiet_don_hangs ct 
-		join don_hangs dh on ct.order_id = dh.order_id
-		where ct.order_detail_id = p_id and dh.trang_thai_don_hang not in ('giao_thanh_cong', 'giao_that_bai')
-		
-	) then 
-		signal sqlstate '45000' 
-		set MESSAGE_TEXT = "Error: product has active orders, cannot update";
-	end if; 
-	
-	if p_gia_ban is not null and p_gia_ban < 0 then
-		signal sqlstate '45000' 
-		set MESSAGE_TEXT = "Error: product price is invalid";
-	end if; 
 	
 	if p_so_luong_ton_kho is not null and p_so_luong_ton_kho < 0 then 
 		signal sqlstate '45000' 
 		set MESSAGE_TEXT = "Error: so luong ton kho is invalid";
 	end if; 
+
+    set tong_luong_dang_ban = coalesce((select sum(ct.so_luong_mua) 
+	from chi_tiet_don_hangs ct
+	join don_hangs dh on ct.order_id = dh.order_id
+	where ct.order_detail_id = p_id 
+	and dh.trang_thai_don_hang not in ('giao_thanh_cong', 'giao_that_bai')),0);
+    if p_so_luong_ton_kho is not null and p_so_luong_ton_kho < tong_luong_dang_ban then 
+		signal sqlstate '45000' 
+		set MESSAGE_TEXT = "Error: so luong ton kho is invalid";
+	end if; 
+
+	if p_gia_ban is not null and p_gia_ban < 0 then
+		signal sqlstate '45000' 
+		set MESSAGE_TEXT = "Error: product price is invalid";
+	end if; 
 	
 	if p_trang_thai is not null and p_trang_thai not in ('dang_ban','ngung_ban','het_hang') then 
 		signal sqlstate '45000' 
-		set MESSAGE_TEXT = "Error: so luong ton kho is invalid";
+		set MESSAGE_TEXT = "Error: trang_thai is invalid";
 	end if; 
 	
 	update san_phams 
@@ -160,7 +160,7 @@ begin
 	start transaction;
 
 	IF NOT EXISTS (
-	        SELECT 1 FROM san_phams WHERE id = p_id
+	        SELECT 1 FROM san_phams WHERE product_id = p_id
 	    ) THEN
 	        SIGNAL SQLSTATE '45000'
 	        SET MESSAGE_TEXT = 'Error: san_pham not exist';
@@ -172,11 +172,11 @@ begin
 	) then 
 		UPDATE san_phams
         SET trang_thai = 'ngung_ban'
-        WHERE id = p_id;	
+        WHERE product_id = p_id;	
         SELECT 'UPDATE: product state has been converted into ngung_ban' AS message;
 
 	ELSE
-        DELETE FROM san_phams WHERE id = p_id;
+        DELETE FROM san_phams WHERE product_id = p_id;
         SELECT 'DELETE: product has been deleted' AS message;
     END IF;
 
@@ -184,3 +184,63 @@ begin
 END $$        
 
 DELIMITER ;
+
+DELIMITER $$
+
+CREATE PROCEDURE sp_thong_ke_doanh_thu_nguoi_ban(
+    IN p_seller_id INT,
+    IN p_tu_ngay DATETIME,
+    IN p_den_ngay DATETIME
+)
+BEGIN
+    -- 1. Kiểm tra khoảng thời gian hợp lệ
+    IF p_tu_ngay > p_den_ngay THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Error: tu_ngay phai nho hon hoac bang den_ngay';
+    END IF;
+
+    -- 2. Kiểm tra seller tồn tại
+    IF NOT EXISTS (
+        SELECT 1 FROM nguoi_bans WHERE id = p_seller_id
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Error: seller_id khong ton tai';
+    END IF;
+
+    -- 3. Thống kê doanh thu (chỉ tính đơn đã thanh toán + giao thành công)
+    SELECT 
+        sp.product_id,
+        sp.ten_san_pham,
+        
+        COUNT(DISTINCT dh.order_id) AS so_don_hang,
+        SUM(ctdh.so_luong_mua) AS tong_so_luong_ban,
+        SUM(ctdh.so_luong_mua * ctdh.gia_ban) AS doanh_thu
+
+    FROM san_phams sp
+    
+    JOIN chi_tiet_don_hangs ctdh 
+        ON sp.product_id = ctdh.order_detail_id
+        
+    JOIN don_hangs dh 
+        ON dh.order_id = ctdh.order_id
+
+    WHERE 
+        sp.seller_id = p_seller_id
+        AND dh.thoi_gian_giao_dich BETWEEN p_tu_ngay AND p_den_ngay
+        
+        AND dh.trang_thai_thanh_toan = 'da_thanh_toan'
+        AND dh.trang_thai_don_hang = 'giao_thanh_cong'
+
+    GROUP BY 
+        sp.product_id, sp.ten_san_pham
+
+    HAVING 
+        doanh_thu > 0
+
+    ORDER BY 
+        doanh_thu DESC;
+
+END$$
+
+DELIMITER ;
+
