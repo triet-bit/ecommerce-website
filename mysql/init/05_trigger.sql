@@ -63,3 +63,79 @@ BEGIN
 END //
 
 DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER trg_kiem_tra_ton_kho
+BEFORE INSERT ON them_vao_gio
+FOR EACH ROW
+BEGIN
+    DECLARE v_so_luong_ton_kho INT;
+
+    SELECT so_luong_ton_kho INTO v_so_luong_ton_kho
+    FROM san_phams sp
+    WHERE sp.product_id = NEW.product_id;
+
+    IF v_so_luong_ton_kho < NEW.so_luong_dinh_mua THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Error: so luong ton kho khong du';
+    END IF;
+
+END // 
+DELIMITER ; 
+
+DELIMITER //
+DROP TRIGGER IF EXISTS trg_cho_phep_danh_gia //
+CREATE TRIGGER trg_cho_phep_danh_gia
+BEFORE INSERT ON danh_gia_san_phams
+FOR EACH ROW
+BEGIN
+    IF NOT EXISTS (
+        SELECT 1 FROM don_hangs dh
+        WHERE dh.order_id = NEW.order_id
+        AND dh.trang_thai_don_hang = 'giao_thanh_cong'
+        AND (
+            dh.phuong_thuc_thanh_toan != 'COD'
+            OR dh.trang_thai_thanh_toan = 'da_thanh_toan'
+        )
+    ) THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Loi: khong duoc phep danh gia san pham';
+    END IF;
+END //
+DELIMITER ;
+
+DELIMITER // 
+DROP TRIGGER IF EXISTS trg_kiem_tra_danh_muc // 
+CREATE TRIGGER trg_kiem_tra_danh_muc
+BEFORE UPDATE ON danh_muc_san_phams
+FOR EACH ROW
+BEGIN 
+    DECLARE is_cycle INT DEFAULT 0; 
+    IF NEW.parent_category_id = NEW.category_id THEN
+        SIGNAL SQLSTATE '45000' 
+        SET MESSAGE_TEXT = 'Error: Category cannot be its parent (Cycle detected)'; 
+    END IF; 
+    IF NEW.parent_category_id IS NOT NULL THEN 
+        WITH RECURSIVE category_tree AS (
+            SELECT category_id, parent_category_id
+            FROM danh_muc_san_phams
+            WHERE category_id = NEW.parent_category_id
+
+            UNION ALL 
+
+            SELECT d.category_id, d.parent_category_id
+            FROM danh_muc_san_phams d 
+            INNER JOIN category_tree ct ON d.category_id = ct.parent_category_id
+        )
+        SELECT 1 INTO is_cycle
+        FROM category_tree 
+        WHERE category_id = NEW.category_id
+        LIMIT 1; 
+
+        IF is_cycle = 1 THEN 
+            SIGNAL SQLSTATE '45000' 
+            SET MESSAGE_TEXT = 'Error: Category cannot be its parent (Cycle detected)'; 
+        END IF; 
+    END IF; 
+END // 
+DELIMITER ; 

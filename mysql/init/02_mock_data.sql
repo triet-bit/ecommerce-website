@@ -3,6 +3,7 @@
 -- Thứ tự insert đảm bảo đúng ràng buộc FK
 -- =====================================================================
 
+SET NAMES 'utf8mb4';
 USE ecommerce;
 SET FOREIGN_KEY_CHECKS = 0;
 
@@ -12,26 +13,26 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- Tổng: 18 hàng
 -- =====================================================================
 INSERT INTO nguoi_dungs (id, ho, dem, ten, so_dien_thoai, email, mat_khau) VALUES
-(1,  'Nguyễn', 'Thị',    'Lan',    '0901234501', 'lan.nguyen@gmail.com',    '$2b$12$hashed_pw_1'),
-(2,  'Trần',   'Văn',    'Hùng',   '0901234502', 'hung.tran@gmail.com',     '$2b$12$hashed_pw_2'),
-(3,  'Lê',     'Thị',    'Mai',    '0901234503', 'mai.le@gmail.com',        '$2b$12$hashed_pw_3'),
-(4,  'Phạm',   'Quốc',   'Bảo',    '0901234504', 'bao.pham@gmail.com',      '$2b$12$hashed_pw_4'),
-(5,  'Hoàng',  'Minh',   'Tuấn',   '0901234505', 'tuan.hoang@gmail.com',    '$2b$12$hashed_pw_5'),
-(6,  'Võ',     'Thị',    'Hoa',    '0901234506', 'hoa.vo@gmail.com',        '$2b$12$hashed_pw_6'),
-(7,  'Đặng',   'Văn',    'Long',   '0901234507', 'long.dang@gmail.com',     '$2b$12$hashed_pw_7'),
-(8,  'Bùi',    'Thị',    'Tuyết',  '0901234508', 'tuyet.bui@gmail.com',     '$2b$12$hashed_pw_8'),
-(9,  'Đinh',   'Hoàng',  'Khoa',   '0901234509', 'khoa.dinh@gmail.com',     '$2b$12$hashed_pw_9'),
-(10, 'Dương',  'Thanh',  'Trúc',   '0901234510', 'truc.duong@gmail.com',    '$2b$12$hashed_pw_10'),
+(1,  'Nguyễn', 'Thị',    'Lan',    '0901234501', 'lan.nguyen@gmail.com',    '$2b$10$3d7R3nXn0SaZOGcbI9dDcO4okhcytaVqwtTfuKOf9p7WgZYUPvOw2'),
+(2,  'Trần',   'Văn',    'Hùng',   '0901234502', 'hung.tran@gmail.com',     '$2b$10$3d7R3nXn0SaZOGcbI9dDcO4okhcytaVqwtTfuKOf9p7WgZYUPvOw2'),
+(3,  'Lê',     'Thị',    'Mai',    '0901234503', 'mai.le@gmail.com',        '$2b$10$3d7R3nXn0SaZOGcbI9dDcO4okhcytaVqwtTfuKOf9p7WgZYUPvOw2'),
+(4,  'Phạm',   'Quốc',   'Bảo',    '0901234504', 'bao.pham@gmail.com',      '$2b$10$3d7R3nXn0SaZOGcbI9dDcO4okhcytaVqwtTfuKOf9p7WgZYUPvOw2'),
+(5,  'Hoàng',  'Minh',   'Tuấn',   '0901234505', 'tuan.hoang@gmail.com',    '$2b$10$3d7R3nXn0SaZOGcbI9dDcO4okhcytaVqwtTfuKOf9p7WgZYUPvOw2'),
+(6,  'Võ',     'Thị',    'Hoa',    '0901234506', 'hoa.vo@gmail.com',        '$2b$10$3d7R3nXn0SaZOGcbI9dDcO4okhcytaVqwtTfuKOf9p7WgZYUPvOw2'),
+(7,  'Đặng',   'Văn',    'Long',   '0901234507', 'long.dang@gmail.com',     '$2b$10$3d7R3nXn0SaZOGcbI9dDcO4okhcytaVqwtTfuKOf9p7WgZYUPvOw2'),
+(8,  'Bùi',    'Thị',    'Tuyết',  '0901234508', 'tuyet.bui@gmail.com',     '$2b$10$3d7R3nXn0SaZOGcbI9dDcO4okhcytaVqwtTfuKOf9p7WgZYUPvOw2'),
+(9,  'Đinh',   'Hoàng',  'Khoa',   '0901234509', 'khoa.dinh@gmail.com',     '$2b$10$3d7R3nXn0SaZOGcbI9dDcO4okhcytaVqwtTfuKOf9p7WgZYUPvOw2'),
+(10, 'Dương',  'Thanh',  'Trúc',   '0901234510', 'truc.duong@gmail.com',    '$2b$10$3d7R3nXn0SaZOGcbI9dDcO4okhcytaVqwtTfuKOf9p7WgZYUPvOw2'),
 -- người bán
-(11, 'Công ty', NULL,    'KLONG',   '0281234511', 'seller.klong@gmail.com',  '$2b$12$hashed_pw_11'),
-(12, 'Cửa hàng', NULL,  'Thiên Long','0281234512','seller.thienlong@gmail.com','$2b$12$hashed_pw_12'),
-(13, 'Shop',   NULL,    'Văn phòng phẩm ABC','0281234513','seller.abc@gmail.com','$2b$12$hashed_pw_13'),
-(14, 'Công ty', NULL,   'TechWorld', '0281234514','seller.techworld@gmail.com','$2b$12$hashed_pw_14'),
-(15, 'Shop',   NULL,    'FashionHub','0281234515','seller.fashionhub@gmail.com','$2b$12$hashed_pw_15'),
+(11, 'Công ty', NULL,    'KLONG',   '0281234511', 'seller.klong@gmail.com',  '$2b$10$3d7R3nXn0SaZOGcbI9dDcO4okhcytaVqwtTfuKOf9p7WgZYUPvOw2'),
+(12, 'Cửa hàng', NULL,  'Thiên Long','0281234512','seller.thienlong@gmail.com','$2b$10$3d7R3nXn0SaZOGcbI9dDcO4okhcytaVqwtTfuKOf9p7WgZYUPvOw2'),
+(13, 'Shop',   NULL,    'Văn phòng phẩm ABC','0281234513','seller.abc@gmail.com','$2b$10$3d7R3nXn0SaZOGcbI9dDcO4okhcytaVqwtTfuKOf9p7WgZYUPvOw2'),
+(14, 'Công ty', NULL,   'TechWorld', '0281234514','seller.techworld@gmail.com','$2b$10$3d7R3nXn0SaZOGcbI9dDcO4okhcytaVqwtTfuKOf9p7WgZYUPvOw2'),
+(15, 'Shop',   NULL,    'FashionHub','0281234515','seller.fashionhub@gmail.com','$2b$10$3d7R3nXn0SaZOGcbI9dDcO4okhcytaVqwtTfuKOf9p7WgZYUPvOw2'),
 -- quản trị viên
-(16, 'Admin',  NULL,    'Super',    '0901234516', 'superadmin@ecom.vn',      '$2b$12$hashed_pw_16'),
-(17, 'Admin',  NULL,    'Hệ thống', '0901234517', 'admin.system@ecom.vn',    '$2b$12$hashed_pw_17'),
-(18, 'Admin',  NULL,    'Nội dung', '0901234518', 'admin.content@ecom.vn',   '$2b$12$hashed_pw_18');
+(16, 'Admin',  NULL,    'Super',    '0901234516', 'superadmin@ecom.vn',      '$2b$10$3d7R3nXn0SaZOGcbI9dDcO4okhcytaVqwtTfuKOf9p7WgZYUPvOw2'),
+(17, 'Admin',  NULL,    'Hệ thống', '0901234517', 'admin.system@ecom.vn',    '$2b$10$3d7R3nXn0SaZOGcbI9dDcO4okhcytaVqwtTfuKOf9p7WgZYUPvOw2'),
+(18, 'Admin',  NULL,    'Nội dung', '0901234518', 'admin.content@ecom.vn',   '$2b$10$3d7R3nXn0SaZOGcbI9dDcO4okhcytaVqwtTfuKOf9p7WgZYUPvOw2');
 
 -- =====================================================================
 -- 2. KHACH_HANGS (id 1–10)
@@ -325,21 +326,21 @@ SET FOREIGN_KEY_CHECKS = 1;
 
 -- Thêm 5 người dùng mới (id 19–23) cho nguoi_bans
 INSERT INTO nguoi_dungs (id, ho, dem, ten, so_dien_thoai, email, mat_khau) VALUES
-(19, 'Shop',   NULL, 'Đồ Gia Dụng MinhHoa',  '0281234519', 'seller.minhhoa@gmail.com',   '$2b$12$hashed_pw_19'),
-(20, 'Công ty', NULL, 'Mỹ Phẩm LaVie',        '0281234520', 'seller.lavie@gmail.com',     '$2b$12$hashed_pw_20'),
-(21, 'Shop',   NULL, 'Thể Thao SportZone',    '0281234521', 'seller.sportzone@gmail.com', '$2b$12$hashed_pw_21'),
-(22, 'Cửa hàng', NULL, 'Sách Hay BookNest',   '0281234522', 'seller.booknest@gmail.com',  '$2b$12$hashed_pw_22'),
-(23, 'Công ty', NULL, 'Nội Thất HomeDecor',   '0281234523', 'seller.homedecor@gmail.com', '$2b$12$hashed_pw_23');
+(19, 'Shop',   NULL, 'Đồ Gia Dụng MinhHoa',  '0281234519', 'seller.minhhoa@gmail.com',   '$2b$10$3d7R3nXn0SaZOGcbI9dDcO4okhcytaVqwtTfuKOf9p7WgZYUPvOw2'),
+(20, 'Công ty', NULL, 'Mỹ Phẩm LaVie',        '0281234520', 'seller.lavie@gmail.com',     '$2b$10$3d7R3nXn0SaZOGcbI9dDcO4okhcytaVqwtTfuKOf9p7WgZYUPvOw2'),
+(21, 'Shop',   NULL, 'Thể Thao SportZone',    '0281234521', 'seller.sportzone@gmail.com', '$2b$10$3d7R3nXn0SaZOGcbI9dDcO4okhcytaVqwtTfuKOf9p7WgZYUPvOw2'),
+(22, 'Cửa hàng', NULL, 'Sách Hay BookNest',   '0281234522', 'seller.booknest@gmail.com',  '$2b$10$3d7R3nXn0SaZOGcbI9dDcO4okhcytaVqwtTfuKOf9p7WgZYUPvOw2'),
+(23, 'Công ty', NULL, 'Nội Thất HomeDecor',   '0281234523', 'seller.homedecor@gmail.com', '$2b$10$3d7R3nXn0SaZOGcbI9dDcO4okhcytaVqwtTfuKOf9p7WgZYUPvOw2');
 
 -- Thêm 7 người dùng mới (id 24–30) cho quan_tri_viens
 INSERT INTO nguoi_dungs (id, ho, dem, ten, so_dien_thoai, email, mat_khau) VALUES
-(24, 'Admin', NULL, 'Gian Hàng 1',  '0901234524', 'admin.gianhang1@ecom.vn',  '$2b$12$hashed_pw_24'),
-(25, 'Admin', NULL, 'Người Dùng 1', '0901234525', 'admin.nguoidung1@ecom.vn', '$2b$12$hashed_pw_25'),
-(26, 'Admin', NULL, 'Đơn Hàng 1',  '0901234526', 'admin.donhang1@ecom.vn',   '$2b$12$hashed_pw_26'),
-(27, 'Admin', NULL, 'Sản Phẩm 1',  '0901234527', 'admin.sanpham1@ecom.vn',   '$2b$12$hashed_pw_27'),
-(28, 'Admin', NULL, 'Gian Hàng 2', '0901234528', 'admin.gianhang2@ecom.vn',  '$2b$12$hashed_pw_28'),
-(29, 'Admin', NULL, 'Người Dùng 2','0901234529', 'admin.nguoidung2@ecom.vn', '$2b$12$hashed_pw_29'),
-(30, 'Admin', NULL, 'Đơn Hàng 2', '0901234530', 'admin.donhang2@ecom.vn',   '$2b$12$hashed_pw_30');
+(24, 'Admin', NULL, 'Gian Hàng 1',  '0901234524', 'admin.gianhang1@ecom.vn',  '$2b$10$3d7R3nXn0SaZOGcbI9dDcO4okhcytaVqwtTfuKOf9p7WgZYUPvOw2'),
+(25, 'Admin', NULL, 'Người Dùng 1', '0901234525', 'admin.nguoidung1@ecom.vn', '$2b$10$3d7R3nXn0SaZOGcbI9dDcO4okhcytaVqwtTfuKOf9p7WgZYUPvOw2'),
+(26, 'Admin', NULL, 'Đơn Hàng 1',  '0901234526', 'admin.donhang1@ecom.vn',   '$2b$10$3d7R3nXn0SaZOGcbI9dDcO4okhcytaVqwtTfuKOf9p7WgZYUPvOw2'),
+(27, 'Admin', NULL, 'Sản Phẩm 1',  '0901234527', 'admin.sanpham1@ecom.vn',   '$2b$10$3d7R3nXn0SaZOGcbI9dDcO4okhcytaVqwtTfuKOf9p7WgZYUPvOw2'),
+(28, 'Admin', NULL, 'Gian Hàng 2', '0901234528', 'admin.gianhang2@ecom.vn',  '$2b$10$3d7R3nXn0SaZOGcbI9dDcO4okhcytaVqwtTfuKOf9p7WgZYUPvOw2'),
+(29, 'Admin', NULL, 'Người Dùng 2','0901234529', 'admin.nguoidung2@ecom.vn', '$2b$10$3d7R3nXn0SaZOGcbI9dDcO4okhcytaVqwtTfuKOf9p7WgZYUPvOw2'),
+(30, 'Admin', NULL, 'Đơn Hàng 2', '0901234530', 'admin.donhang2@ecom.vn',   '$2b$10$3d7R3nXn0SaZOGcbI9dDcO4okhcytaVqwtTfuKOf9p7WgZYUPvOw2');
 
 -- Bổ sung nguoi_bans (id 19–23)
 INSERT INTO nguoi_bans (id, ten_gian_hang, dia_chi_lay_hang, trang_thai_hoat_dong, giay_phep_kinh_doanh) VALUES

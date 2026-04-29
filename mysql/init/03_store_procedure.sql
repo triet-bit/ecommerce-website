@@ -8,7 +8,8 @@ create procedure sp_them_san_pham(
     in gia_ban decimal(13,2), -- ràng buộc 1.3.5
     in so_luong_ton_kho int , -- ràng buộc 1.3.5
     in seller_id int, 
-    in trang_thai varchar(50) -- thêm vào ở ràng buộc 1.3.10 
+    in trang_thai varchar(50), -- thêm vào ở ràng buộc 1.3.10 
+    in p_url_hinh_anh varchar(255) -- Thêm tham số hình ảnh (P9)
 ) 
 begin
 	DECLARE EXIT HANDLER FOR SQLEXCEPTION 
@@ -66,10 +67,17 @@ begin
 	    SET MESSAGE_TEXT = 'Error: trang_thai iss invalid';
 	end IF ;
 	
-	
-	
 	insert into san_phams (ten_san_pham, mo_ta_chi_tiet, loai_bao_hanh, to_chuc_san_xuat,gia_ban,so_luong_ton_kho, seller_id, trang_thai ) values 
 		(ten_san_pham, mo_ta_chi_tiet, loai_bao_hanh, to_chuc_san_xuat,gia_ban,so_luong_ton_kho, seller_id, trang_thai ); 
+	
+    SET @new_product_id = LAST_INSERT_ID();
+
+    -- Thêm hình minh họa nếu có truyền vào (P9)
+    IF p_url_hinh_anh IS NOT NULL AND TRIM(p_url_hinh_anh) <> '' THEN
+        INSERT INTO hinh_minh_hoas (product_id, url_hinh_anh) VALUES (@new_product_id, p_url_hinh_anh);
+    END IF;
+
+	select 'them san pham thanh cong' as message, @new_product_id as product_id; 
 	commit; 		
 END $$        
 
@@ -187,6 +195,7 @@ DELIMITER ;
 
 DELIMITER $$
 
+DROP PROCEDURE IF EXISTS sp_thong_ke_doanh_thu_nguoi_ban;
 CREATE PROCEDURE sp_thong_ke_doanh_thu_nguoi_ban(
     IN p_seller_id INT,
     IN p_tu_ngay DATETIME,
@@ -244,3 +253,57 @@ END$$
 
 DELIMITER ;
 
+DELIMITER // 
+DROP PROCEDURE IF EXISTS sp_lay_don_hang_theo_khach;
+CREATE PROCEDURE sp_lay_don_hang_theo_khach(
+    IN p_user_id INT, 
+    IN p_trang_thai VARCHAR(50)
+)
+BEGIN 
+    SELECT 
+        dh.order_id, 
+        dh.thoi_gian_giao_dich, 
+        dh.phuong_thuc_thanh_toan,
+        dh.trang_thai_don_hang, 
+        dh.trang_thai_thanh_toan,
+        ctdh.so_luong_mua, 
+        ctdh.gia_ban AS gia_ban_luc_mua,
+        sp.product_id,
+        sp.ten_san_pham,
+        vd.don_vi_van_chuyen,
+        vd.trang_thai_giao_hang,
+        vd.ngay_giao_du_kien,
+        vd.chi_phi_giao_hang
+    FROM don_hangs dh
+    JOIN chi_tiet_don_hangs ctdh ON dh.order_id = ctdh.order_id
+    JOIN san_phams sp ON ctdh.order_detail_id = sp.product_id
+    LEFT JOIN van_dons vd ON dh.order_id = vd.order_id
+    WHERE dh.user_id = p_user_id
+      -- Nếu p_trang_thai bị null (hoặc rỗng) thì lấy tất cả, nếu có truyền thì lọc đúng trạng thái
+      AND (p_trang_thai IS NULL OR p_trang_thai = '' OR dh.trang_thai_don_hang = p_trang_thai)
+    ORDER BY dh.thoi_gian_giao_dich DESC;
+END // 
+DELIMITER ;
+
+-- Thống kê xếp hạng khách hàng (Sử dụng hàm fn_xep_hang_khach_hang)
+DROP PROCEDURE IF EXISTS sp_thong_ke_khach_hang_ranking;
+DELIMITER //
+CREATE PROCEDURE sp_thong_ke_khach_hang_ranking(IN p_top INT)
+BEGIN
+    SELECT 
+        kh.id AS id,
+        CONCAT(nd.ho, ' ', IFNULL(nd.dem, ''), ' ', nd.ten) AS ho_ten,
+        nd.email,
+        kh.tong_diem_tich_luy,
+        fn_xep_hang_khach_hang(kh.id) AS hang_khach_hang,
+        IFNULL(SUM(ct.so_luong_mua * ct.gia_ban), 0) AS tong_chi_tieu,
+        COUNT(DISTINCT dh.order_id) AS so_don_hang
+    FROM khach_hangs kh
+    JOIN nguoi_dungs nd ON kh.id = nd.id
+    LEFT JOIN don_hangs dh ON kh.id = dh.user_id AND dh.trang_thai_don_hang = 'giao_thanh_cong'
+    LEFT JOIN chi_tiet_don_hangs ct ON dh.order_id = ct.order_id
+    GROUP BY kh.id, ho_ten, nd.email, kh.tong_diem_tich_luy
+    ORDER BY tong_chi_tieu DESC
+    LIMIT p_top;
+END //
+DELIMITER ;
